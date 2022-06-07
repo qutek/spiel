@@ -1,11 +1,23 @@
+$navbar-height: 100px;
+$circle-radius: 80px;
+$backgroundColor: #0F0E0E;
+$greenColor: #8B9A46;
+
 html,
 body {
-  padding: 10px;
+  padding: 0;
   margin: 0;
+  height: 100%;
+  width: 100%;
   font-family: 'Lato', sans-serif;
-  background-color: #0F0E0E;
+  background-color: $backgroundColor;
   color: #EEEEEE;
   font-size: 32px;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
 }
 
 a {
@@ -17,8 +29,157 @@ a {
   box-sizing: border-box;
 }
 
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.article {
+  padding: 10px;
+
+  .transcript {
+    font-size: 26px;
+    font-style: italic;
+  }
+}
+
+.navbar {
+  position: relative;
+  height: $navbar-height;
+  min-width: 400px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 10px 20px rgba(82, 74, 74, 0.3);
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 7px;
+    height: 4px;
+    width: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: gray;
+    opacity: 0.3;
+  }
+}
+
+.circle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100px - #{$circle-radius / 2});
+  margin-bottom: 0;
+  height: $circle-radius;
+  width: $circle-radius;
+  border-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: rgb(255, 94, 0);
+  z-index: 9;
+  box-shadow: 0 5px 5px rgba(255, 147, 85, 0.35);
+  transition: height 0.3s;
+
+  &.listening {
+    background-color: $greenColor;
+  }
+
+  .mic-icon {
+    cursor: pointer;
+    color: white;
+    font-size: 27px;
+    transition: opacity 0.3s, transform 0.2s;
+  }
+
+  .mic {
+    cursor: pointer;
+    position: absolute;
+    top: 195px;
+    color: white;
+    background-color: rgba(255, 212, 212, 0.308);
+    height: 60px;
+    width: 60px;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    cursor: pointer;
+
+    &:nth-child(2) {
+      opacity: 0;
+      transition: opacity 0.3s, top 0.5s ease;
+    }
+
+    &:nth-child(3) {
+      opacity: 0;
+      transition: opacity 0.3s, top 0.5s 0.1s ease;
+    }
+
+    &:nth-child(4) {
+      opacity: 0;
+      transition: opacity 0.3s, top 0.5s 0.22s ease;
+      margin-bottom: 0px;
+    }
+  }
+
+  &.options {
+    height: 140px;
+    border-radius: 50px;
+
+    .mic-icon {
+      transform: rotate(360deg);
+      opacity: 0;
+    }
+
+    .mic {
+      &:nth-child(2) {
+        opacity: 1;
+        top: 5px;
+      }
+
+      &:nth-child(3) {
+        opacity: 1;
+        top: calc(5px + 60px + 5px);
+      }
+
+      &:nth-child(4) {
+        opacity: 1;
+        top: calc(5px + 60px + 5px + 60px + 5px);
+      }
+    }
+  }
+}
+
+.circle-padding {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100px - #{$circle-radius + 20} / 2);
+  margin-bottom: 0;
+  height: calc(#{$circle-radius} + 20px);
+  width: calc(#{$circle-radius} + 20px);
+  border-radius: calc(#{$circle-radius + 20} / 2);
+  background-color: $backgroundColor;
+}
+
+.action-icon {
+  cursor: pointer;
+  font-size: 29px;
+  color: $backgroundColor;
+}
+
+
 .correct {
-  color: #8B9A46;
+  color: $greenColor;
 }
 .missed {
   opacity: 0.5;
