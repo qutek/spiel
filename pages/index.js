@@ -1,36 +1,62 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { diffWords } from 'diff';
 
-const article = 'Dark theme is one of the most requested features over the past few years. Both Apple and Google made a dark theme an essential part of UI. Dark theme’s reduced luminance provides safety in dark environments and can minimize eye strain.';
-
-const Text = ({correct, interim, final, children}) => {
+const Text = ({type, isFinal, children}) => {
   useEffect(() => {
-    if (correct && final) {
-      console.log('correct', children)
+    if ('correct' === type && isFinal) {
+      console.log('correct', children);
     }
-  }, [correct, children, interim, final])
+  }, [type, isFinal, children]);
+
+  const classNames = useMemo(() => {
+    let classes = ['text'];
+
+    if ('correct' === type) {
+      classes.push(type);
+    }
+
+    if (isFinal) {
+      classes.push(type);
+    }
+
+    return classes.join(' ');
+  }, [type, isFinal])
+
   return (
-    <span className={correct ? 'correct' : ''}>{children}</span>
+    <span className={classNames}>{children}</span>
   )
 }
 
 const Dictaphone = () => {
+  const [article, setArticle] = useState(false);
   const {
     transcript,
-    interimTranscript,
     finalTranscript,
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition
   } = useSpeechRecognition();
 
+  const generateArticle = useCallback(() => {
+    resetTranscript();
+    fetch('https://api.quotable.io/random')
+      .then(response => response.json())
+      .then(data => setArticle(data.content));
+  }, [])
+
+  useEffect(generateArticle, []);
+
   const diff = useMemo(() => {
+    if (!article) {
+      return [];
+    }
+
     return diffWords(article, transcript, {
       ignoreCase: true,
     });
-  }, [transcript]);
+  }, [article, transcript]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser does not support speech recognition.</span>;
@@ -40,20 +66,26 @@ const Dictaphone = () => {
     SpeechRecognition.startListening({ language: 'en-US', continuous: true })
   }
 
-  // console.log('DIFF', diff)
+  if (!article) {
+    return <div>Loading...</div>
+  }
+
+  console.log('DIFF', diff)
 
   return (
     <div>
       {
         diff.map((d, i) => {
-          {/*const color = d.*/}
-          return !d.added && (<Text key={i} interim={interimTranscript} final={finalTranscript} correct={!d.removed}>{d.value}</Text>)
+          const isUnprocessed = diff.map((dt, index) => (dt.removed && index + 1)).filter(Boolean).pop() - 1 === i;
+          const type = d.removed ? (isUnprocessed ? 'unprocessed' : 'missed') : 'correct';
+          return !d.added && (<Text key={i} isFinal={!!finalTranscript} type={type}>{d.value}</Text>)
         })
       }
       <p>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={start}>Start</button>
       <button onClick={SpeechRecognition.stopListening}>Stop</button>
       <button onClick={resetTranscript}>Reset</button>
+      <button onClick={generateArticle}>Next</button>
       <p>{transcript}</p>
     </div>
   );
