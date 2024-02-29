@@ -2,7 +2,7 @@ repo_name: qutek/spiel
 report_id: 539001720cba6671d38cadaac2ea0fd1
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-05T08:43:49+00:00'
+timestamp: '2024-02-29T18:45:20+00:00'
 requested_by: qutek
 provider: github
 branch: master
@@ -20,7 +20,7 @@ tools:
   detection_source_url: https://github.com/qutek/spiel
   detection_source: Repo Metadata
 - name: Next.js
-  description: 'A small framework for server-rendered universal JavaScript apps '
+  description: A small framework for server-rendered universal JavaScript apps
   website_url: https://nextjs.org/
   version: 12.1.6
   open_source: true
